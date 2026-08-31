@@ -3,16 +3,16 @@ using System.Net.Mail;
 
 namespace Cochief.Domain.ValueObjects;
 
-public sealed record EmailAddress
+public sealed record Email
 {
     private string Value { get; }
 
-    private EmailAddress(string value)
+    private Email(string value)
     {
         Value = value;
     }
 
-    public static EmailAddress Create(string value)
+    public static Email Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value)) throw new InvalidEmailException("Email cannot be empty.");
 
@@ -25,7 +25,7 @@ public sealed record EmailAddress
             throw new InvalidEmailException("Email must follow the local@domain.extension format.");
         }
 
-        return new EmailAddress(normalizedValue);
+        return new Email(normalizedValue);
     }
 
     public override string ToString() => Value;

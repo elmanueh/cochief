@@ -1,5 +1,9 @@
 namespace cochief;
 
+using Cochief.Infrastructure;
+using Cochief.Infrastructure.Middleware;
+using Cochief.Infrastructure.Presentation.Mappers;
+
 public partial class Program
 {
     protected Program() { }
@@ -8,14 +12,17 @@ public partial class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-
         builder.Services.AddControllers();
+        builder.Services.AddAutoMapper(configuration =>
+        {
+            configuration.LicenseKey = builder.Configuration["AutoMapper:LicenseKey"];
+        }, typeof(PresentationMappingProfile));
+
+        builder.Services.AddInfrastructure();
 
         WebApplication app = builder.Build();
 
-        // Configure the HTTP request pipeline.
-
+        app.UseMiddleware<ExceptionHandlerMiddleware>();
         app.UseAuthorization();
 
         app.MapControllers();

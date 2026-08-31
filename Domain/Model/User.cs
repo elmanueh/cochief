@@ -5,28 +5,28 @@ namespace Cochief.Domain.Model;
 
 public sealed class User
 {
-    private Guid Id { get; }
-    private string Name { get; set; }
-    private EmailAddress Email { get; set; }
-    private string Password { get; set; }
-    private Player? Player { get; set; }
+    public Guid Id { get; }
+    public string Name { get; private set; }
+    public Email Email { get; private set; }
+    public string PasswordHash { get; private set; }
+    public Player? Player { get; private set; }
 
-    private User(Guid id, string name, EmailAddress email, string password)
+    private User(Guid id, string name, Email email, string passwordHash)
     {
         Id = id;
         Name = name;
         Email = email;
-        Password = password;
+        PasswordHash = passwordHash;
         Player = null;
     }
 
-    public static User Create(string name, string email, string password)
+    public static User Create(string name, string email, string passwordHash)
     {
         if (string.IsNullOrWhiteSpace(name)) throw new InvalidUserException("User name cannot be empty.");
-        EmailAddress emailAddress = EmailAddress.Create(email);
-        if (string.IsNullOrWhiteSpace(password)) throw new InvalidUserException("User password cannot be empty.");
+        Email mail = Email.Create(email);
+        if (string.IsNullOrWhiteSpace(passwordHash)) throw new InvalidUserException("User password cannot be empty.");
 
-        return new User(Guid.NewGuid(), name.Trim(), emailAddress, password);
+        return new User(Guid.NewGuid(), name.Trim(), mail, passwordHash);
     }
 
     public void LinkPlayer(Player player)

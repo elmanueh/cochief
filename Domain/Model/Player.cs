@@ -5,11 +5,11 @@ namespace Cochief.Domain.Model;
 
 public sealed class Player
 {
-    private Guid Id { get; }
-    private string Name { get; set; }
-    private Tag Tag { get; set; }
-    private int TownHallLevel { get; set; }
-    private Guid? ClanId { get; set; }
+    public Guid Id { get; }
+    public string Name { get; private set; }
+    public Tag Tag { get; private set; }
+    public int TownHallLevel { get; private set; }
+    public Guid? ClanId { get; private set; }
 
     private Player(Guid id, string name, Tag tag, int townHallLevel, Guid? clanId = null)
     {
