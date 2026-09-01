@@ -1,4 +1,4 @@
-namespace Cochief.Infrastructure.Middleware;
+namespace Cochief.Api.Middleware;
 
 using Cochief.Application.Exceptions;
 using Cochief.Domain.Exceptions;
@@ -41,6 +41,8 @@ public sealed class ExceptionHandlerMiddleware(RequestDelegate next)
         exception switch
         {
             EntityNotFoundException => (StatusCodes.Status404NotFound, "Not Found", exception.Message),
+            UserNotFoundException => (StatusCodes.Status404NotFound, "Not Found", exception.Message),
+            UserAlreadyExistsException => (StatusCodes.Status409Conflict, "Conflict", exception.Message),
             RepositoryException => (StatusCodes.Status500InternalServerError, "Internal Server Error", exception.Message),
             AuthException => (StatusCodes.Status401Unauthorized, "Unauthorized", exception.Message),
             ValidationException => (StatusCodes.Status400BadRequest, "Bad Request", exception.Message),

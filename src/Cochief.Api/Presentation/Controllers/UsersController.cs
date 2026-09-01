@@ -1,10 +1,10 @@
 using AutoMapper;
-using cochief.Infrastructure.Presentation.Dtos;
+using Cochief.Api.Presentation.Dtos;
 using Cochief.Domain.Model;
 using Cochief.Domain.Ports;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Cochief.Infrastructure.Presentation.Controllers;
+namespace Cochief.Api.Presentation.Controllers;
 
 [ApiController]
 [Route("api/users")]

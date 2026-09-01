@@ -6,6 +6,8 @@ using Cochief.Infrastructure.Persistence;
 using Cochief.Infrastructure.Persistence.Repositories;
 using Cochief.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection
 {

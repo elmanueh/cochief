@@ -1,8 +1,8 @@
 using AutoMapper;
-using cochief.Infrastructure.Presentation.Dtos;
+using Cochief.Api.Presentation.Dtos;
 using Cochief.Domain.Model;
 
-namespace Cochief.Infrastructure.Presentation.Mappers;
+namespace Cochief.Api.Presentation.Mappers;
 
 public sealed class PresentationMappingProfile : Profile
 {
