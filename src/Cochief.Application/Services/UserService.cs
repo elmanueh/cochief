@@ -1,11 +1,12 @@
 namespace Cochief.Application.Services;
 
 using Cochief.Application.Exceptions;
+using Cochief.Domain.Exceptions;
 using Cochief.Domain.Model;
 using Cochief.Domain.Ports;
 using Cochief.Domain.ValueObjects;
 
-public sealed class UserService(IPasswordHasher passwordHasher, IUserRepository userRepository, IUnitOfWork unitOfWork) : IUserService
+public sealed class UserService(IPasswordHasher passwordHasher, IUserRepository userRepository, IUnitOfWork unitOfWork, IClashOfClansService clashOfClansService) : IUserService
 {
     public async Task<User> CreateUserAsync(string name, string email, string password, CancellationToken ct)
     {
@@ -39,9 +40,21 @@ public sealed class UserService(IPasswordHasher passwordHasher, IUserRepository 
     public async Task LinkPlayerAsync(Guid userId, string playerTag, string token, CancellationToken ct)
     {
         User user = await GetUserAsync(userId, ct);
+        Tag tag = Tag.Create(playerTag);
 
-        // TODO: Replace these provisional player data with The Clash API verification.
-        user.LinkPlayer(Player.Create("Pending verification", playerTag, 1));
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            throw new InvalidPlayerException("Player verification token cannot be empty.");
+        }
+
+        bool isValidToken = await clashOfClansService.VerifyPlayerTokenAsync(tag, token, ct);
+        if (!isValidToken)
+        {
+            throw new InvalidPlayerException("Player tag or verification token is invalid.");
+        }
+
+        Player player = await clashOfClansService.GetPlayerAsync(tag, ct);
+        user.LinkPlayer(player);
 
         await userRepository.UpdateAsync(user, ct);
         await unitOfWork.SaveChangesAsync(ct);

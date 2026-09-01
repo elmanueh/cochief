@@ -1,7 +1,7 @@
 namespace Cochief.Infrastructure.ClashOfClans.Services;
 
+using Cochief.Domain.Ports;
 using Cochief.Domain.ValueObjects;
-using Cochief.Infrastructure.ClashOfClans.Contracts;
 using Cochief.Infrastructure.ClashOfClans.Generated;
 
 internal sealed class ClashOfClansService : IClashOfClansService
@@ -29,7 +29,7 @@ internal sealed class ClashOfClansService : IClashOfClansService
     public async Task<bool> VerifyPlayerTokenAsync(Tag playerTag, string token, CancellationToken ct)
     {
         VerifyTokenResponse response = await _apiClient.VerifyTokenAsync(playerTag.Value, new VerifyTokenRequest { Token = token }, ct);
-        
+
         return string.Equals(response.Status, "ok", StringComparison.OrdinalIgnoreCase);
     }
 }

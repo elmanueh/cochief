@@ -1,4 +1,4 @@
-namespace Cochief.Infrastructure.ClashOfClans.Contracts;
+namespace Cochief.Domain.Ports;
 
 using Cochief.Domain.Model;
 using Cochief.Domain.ValueObjects;

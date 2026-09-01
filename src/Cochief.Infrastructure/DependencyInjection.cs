@@ -3,7 +3,6 @@ namespace Cochief.Infrastructure;
 using Cochief.Application.Services;
 using Cochief.Domain.Ports;
 using Cochief.Infrastructure.ClashOfClans;
-using Cochief.Infrastructure.ClashOfClans.Contracts;
 using Cochief.Infrastructure.ClashOfClans.Generated;
 using Cochief.Infrastructure.ClashOfClans.Services;
 using Cochief.Infrastructure.Persistence;
