@@ -1,22 +1,26 @@
 using Cochief.Domain.Enums;
 using Cochief.Domain.Exceptions;
 using Cochief.Domain.ValueObjects;
+using System.Collections.ObjectModel;
 
 namespace Cochief.Domain.Model;
 
 public sealed class Clan
 {
-    private Guid Id { get; }
-    private string Name { get; }
-    private Tag Tag { get; }
-    private IEnumerable<Member> Members { get; }
+    private readonly List<Member> _members;
+
+    public Guid Id { get; }
+    public string Name { get; }
+    public Tag Tag { get; }
+    public ReadOnlyCollection<Member> Members { get; }
 
     private Clan(Guid id, string name, Tag tag)
     {
         Id = id;
         Name = name;
         Tag = tag;
-        Members = new List<Member>();
+        _members = [];
+        Members = _members.AsReadOnly();
     }
 
     public static Clan Create(string name, string tag)
@@ -27,22 +31,31 @@ public sealed class Clan
         return new Clan(Guid.NewGuid(), name.Trim(), tagValue);
     }
 
+    public static Clan Restore(Guid id, string name, string tag, IEnumerable<Member>? members = null)
+    {
+        Clan clan = new Clan(id, name, Tag.Restore(tag));
+
+        if (members is not null) clan._members.AddRange(members);
+
+        return clan;
+    }
+
     public void AddMember(Guid playerId)
     {
         if (playerId == Guid.Empty) throw new InvalidClanException("Player ID cannot be empty.");
-        if (Members.Any(m => m.GetPlayerId() == playerId)) throw new InvalidClanException("Player is already a member of the clan.");
+        if (_members.Any(member => member.PlayerId == playerId)) throw new InvalidClanException("Player is already a member of the clan.");
 
         Member member = Member.Create(playerId, this.Id, MemberRole.Member);
-        ((List<Member>)Members).Add(member);
+        _members.Add(member);
     }
 
     public void RemoveMember(Guid playerId)
     {
         if (playerId == Guid.Empty) throw new InvalidClanException("Player ID cannot be empty.");
 
-        Member? member = Members.FirstOrDefault(m => m.GetPlayerId() == playerId);
+        Member? member = _members.FirstOrDefault(member => member.PlayerId == playerId);
         if (member == null) throw new InvalidClanException("Player is not a member of the clan.");
 
-        ((List<Member>)Members).Remove(member);
+        _members.Remove(member);
     }
 }

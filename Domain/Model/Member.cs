@@ -5,10 +5,10 @@ namespace Cochief.Domain.Model;
 
 public sealed class Member
 {
-    private Guid Id { get; }
-    private Guid PlayerId { get; }
-    private Guid ClanId { get; }
-    private MemberRole Role { get; set; }
+    public Guid Id { get; }
+    public Guid PlayerId { get; }
+    public Guid ClanId { get; }
+    public MemberRole Role { get; private set; }
 
     private Member(Guid id, Guid playerId, Guid clanId, MemberRole role)
     {
@@ -26,7 +26,10 @@ public sealed class Member
         return new Member(Guid.NewGuid(), playerId, clanId, role);
     }
 
-    public Guid GetPlayerId() => PlayerId;
+    public static Member Restore(Guid id, Guid playerId, Guid clanId, MemberRole role)
+    {
+        return new Member(id, playerId, clanId, role);
+    }
 
     public void ChangeRole(MemberRole newRole)
     {

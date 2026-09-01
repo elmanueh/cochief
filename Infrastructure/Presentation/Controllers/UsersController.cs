@@ -1,7 +1,7 @@
 using AutoMapper;
 using cochief.Infrastructure.Presentation.Dtos;
 using Cochief.Domain.Model;
-using Cochief.Domain.Services;
+using Cochief.Domain.Ports;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cochief.Infrastructure.Presentation.Controllers;
@@ -12,9 +12,9 @@ public sealed class UsersController(IUserService userService, IMapper mapper) : 
 {
     [HttpGet("{id}")]
     [ProducesResponseType<UserResponseDto>(StatusCodes.Status200OK)]
-    public ActionResult<UserResponseDto> GetById(Guid id)
+    public async Task<ActionResult<UserResponseDto>> GetById(Guid id, CancellationToken cancellationToken)
     {
-        User user = userService.GetUser(id);
+        User user = await userService.GetUserAsync(id, cancellationToken);
 
         UserResponseDto response = mapper.Map<UserResponseDto>(user);
 
@@ -23,18 +23,18 @@ public sealed class UsersController(IUserService userService, IMapper mapper) : 
 
     [HttpPatch("{id}/link")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> LinkPlayer(Guid id, CreateLinkPlayerRequestDto request)
+    public async Task<IActionResult> LinkPlayer(Guid id, CreateLinkPlayerRequestDto request, CancellationToken cancellationToken)
     {
-        _ = await userService.LinkPlayerAsync(id, request.PlayerTag, request.VerificationToken);
+        await userService.LinkPlayerAsync(id, request.PlayerTag, request.VerificationToken, cancellationToken);
 
         return NoContent();
     }
 
     [HttpPatch("{id}/unlink")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult UnlinkPlayer(Guid id)
+    public async Task<IActionResult> UnlinkPlayer(Guid id, CancellationToken cancellationToken)
     {
-        userService.UnlinkPlayer(id);
+        await userService.UnlinkPlayerAsync(id, cancellationToken);
 
         return NoContent();
     }

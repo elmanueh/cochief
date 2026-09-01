@@ -5,7 +5,7 @@ namespace Cochief.Domain.ValueObjects;
 
 public sealed record Email
 {
-    private string Value { get; }
+    public string Value { get; }
 
     private Email(string value)
     {
@@ -27,6 +27,8 @@ public sealed record Email
 
         return new Email(normalizedValue);
     }
+
+    public static Email Restore(string value) => new Email(value);
 
     public override string ToString() => Value;
 }

@@ -1,55 +1,60 @@
-using Cochief.Domain.Model;
-using Cochief.Domain.Services;
-
 namespace Cochief.Application.Services;
 
-public sealed class UserService(IPasswordHasher passwordHasher) : IUserService
+using Cochief.Domain.Model;
+using Cochief.Domain.Ports;
+using Cochief.Domain.ValueObjects;
+using Cochief.Infrastructure.Persistence.Exceptions;
+
+public sealed class UserService(IPasswordHasher passwordHasher, IUserRepository userRepository, IUnitOfWork unitOfWork) : IUserService
 {
-    public User CreateUser(string name, string email, string password)
+    public async Task<User> CreateUserAsync(string name, string email, string password, CancellationToken ct)
     {
-        string passwordHash = passwordHasher.Hash(password);
+        User? user = await userRepository.FindByEmailAsync(Email.Create(email), ct);
+        if (user is not null) throw new EntityNotFoundException($"User with email '{email}' already exists.");
 
-        User user = User.Create(name, email, passwordHash);
+        user = User.Create(name, email, passwordHasher.Hash(password));
+        await userRepository.CreateAsync(user, ct);
+        await unitOfWork.SaveChangesAsync(ct);
 
         return user;
     }
 
-    public User GetUser(Guid userId)
+    public async Task<User> GetUserAsync(Guid userId, CancellationToken ct)
     {
-        User user = User.Create("change", "change@change.com", "change");
-
-        // TODO: Retrieve the user from the database using the userId
+        User user = await userRepository.GetByIdAsync(userId, ct)
+            ?? throw new EntityNotFoundException($"User '{userId}' was not found.");
 
         return user;
     }
 
-    public async Task<User> LinkPlayerAsync(Guid userId, string playerTag, string token)
+    public async Task<User> GetUserByEmailAsync(string email, CancellationToken ct)
     {
-        User user = GetUser(userId);
+        Email emailObj = Email.Create(email);
 
-        // TODO: Add clash verification service to verify the player tag and token
-
-        Player player = Player.Create("change", "#000000", 1);
-
-        user.LinkPlayer(player);
-
-        // TODO: Persist the user and player to the database
+        User? user = await userRepository.FindByEmailAsync(emailObj, ct);
+        if (user is null) throw new EntityNotFoundException($"User with email '{email}' was not found.");
 
         return user;
     }
 
-    public void UnlinkPlayer(Guid userId)
+    public async Task LinkPlayerAsync(Guid userId, string playerTag, string token, CancellationToken ct)
     {
-        User user = GetUser(userId);
+        User user = await GetUserAsync(userId, ct);
+
+        // TODO: Replace these provisional player data with The Clash API verification.
+        user.LinkPlayer(Player.Create("Pending verification", playerTag, 1));
+
+        await userRepository.UpdateAsync(user, ct);
+        await unitOfWork.SaveChangesAsync(ct);
+    }
+
+    public async Task UnlinkPlayerAsync(Guid userId, CancellationToken ct)
+    {
+        User user = await GetUserAsync(userId, ct);
 
         user.UnlinkPlayer();
 
-        // TODO: Persist the user to the database
-    }
-
-    public User GetUserByEmail(string email)
-    {
-        // TODO: Retrieve the user from the database using the email
-        return User.Create("change", "change@change.com", "change");
+        await userRepository.UpdateAsync(user, ct);
+        await unitOfWork.SaveChangesAsync(ct);
     }
 }

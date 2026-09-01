@@ -2,6 +2,7 @@ namespace Cochief.Infrastructure.Middleware;
 
 using Cochief.Application.Exceptions;
 using Cochief.Domain.Exceptions;
+using Cochief.Infrastructure.Persistence.Exceptions;
 
 public sealed class ExceptionHandlerMiddleware(RequestDelegate next)
 {
@@ -38,10 +39,12 @@ public sealed class ExceptionHandlerMiddleware(RequestDelegate next)
 
     private static (int StatusCode, string Title, string Detail) MapException(Exception exception) =>
         exception switch
-    {
-        AuthException => (StatusCodes.Status401Unauthorized, "Unauthorized", exception.Message),
-        ValidationException => (StatusCodes.Status400BadRequest, "Bad Request", exception.Message),
-        DomainException => (StatusCodes.Status409Conflict, "Conflict", exception.Message),
-        _ => (StatusCodes.Status500InternalServerError, "Internal Server Error", "An unexpected error occurred.")
-    };
+        {
+            EntityNotFoundException => (StatusCodes.Status404NotFound, "Not Found", exception.Message),
+            RepositoryException => (StatusCodes.Status500InternalServerError, "Internal Server Error", exception.Message),
+            AuthException => (StatusCodes.Status401Unauthorized, "Unauthorized", exception.Message),
+            ValidationException => (StatusCodes.Status400BadRequest, "Bad Request", exception.Message),
+            DomainException => (StatusCodes.Status409Conflict, "Conflict", exception.Message),
+            _ => (StatusCodes.Status500InternalServerError, "Internal Server Error", "An unexpected error occurred.")
+        };
 }

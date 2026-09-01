@@ -1,25 +1,26 @@
+namespace Cochief.Application.Services;
+
 using Cochief.Application.Exceptions;
 using Cochief.Domain.Model;
-using Cochief.Domain.Services;
-
-namespace Cochief.Application.Services;
+using Cochief.Domain.Ports;
 
 public sealed class AuthService(IUserService userService, IPasswordHasher passwordHasher) : IAuthService
 {
-    public User Register(string name, string email, string password)
+    public async Task<User> RegisterAsync(string name, string email, string password, CancellationToken ct)
     {
-        User user = userService.CreateUser(name, email, password);
+        User user = await userService.CreateUserAsync(name, email, password, ct);
 
         return user;
     }
 
-    public User Login(string email, string password)
+    public async Task<User> LoginAsync(string email, string password, CancellationToken ct)
     {
-        User user = userService.GetUserByEmail(email);
+        User? user = await userService.GetUserByEmailAsync(email, ct);
 
-        bool isPasswordValid = passwordHasher.Verify(password, user.PasswordHash);
-
-        if (!isPasswordValid) throw new AuthException("Email or password is incorrect.");
+        if (user is null || !passwordHasher.Verify(password, user.PasswordHash))
+        {
+            throw new AuthException("Email or password is incorrect.");
+        }
 
         return user;
     }

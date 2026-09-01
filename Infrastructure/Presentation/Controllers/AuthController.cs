@@ -1,7 +1,7 @@
 using AutoMapper;
 using cochief.Infrastructure.Presentation.Dtos;
 using Cochief.Domain.Model;
-using Cochief.Domain.Services;
+using Cochief.Domain.Ports;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cochief.Infrastructure.Presentation.Controllers;
@@ -12,9 +12,9 @@ public sealed class AuthController(IAuthService authService, IMapper mapper) : C
 {
     [HttpPost("register")]
     [ProducesResponseType<UserResponseDto>(StatusCodes.Status201Created)]
-    public ActionResult<UserResponseDto> Register(CreateUserRequestDto request)
+    public async Task<ActionResult<UserResponseDto>> Register(CreateUserRequestDto request, CancellationToken cancellationToken)
     {
-        User user = authService.Register(request.Name, request.Email, request.Password);
+        User user = await authService.RegisterAsync(request.Name, request.Email, request.Password, cancellationToken);
 
         UserResponseDto response = mapper.Map<UserResponseDto>(user);
 
@@ -23,9 +23,9 @@ public sealed class AuthController(IAuthService authService, IMapper mapper) : C
 
     [HttpPost("login")]
     [ProducesResponseType<UserResponseDto>(StatusCodes.Status200OK)]
-    public ActionResult<UserResponseDto> Login(CreateLoginRequestDto request)
+    public async Task<ActionResult<UserResponseDto>> Login(CreateLoginRequestDto request, CancellationToken cancellationToken)
     {
-        User user = authService.Login(request.Email, request.Password);
+        User user = await authService.LoginAsync(request.Email, request.Password, cancellationToken);
 
         UserResponseDto response = mapper.Map<UserResponseDto>(user);
 

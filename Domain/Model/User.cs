@@ -6,9 +6,9 @@ namespace Cochief.Domain.Model;
 public sealed class User
 {
     public Guid Id { get; }
-    public string Name { get; private set; }
-    public Email Email { get; private set; }
-    public string PasswordHash { get; private set; }
+    public string Name { get; }
+    public Email Email { get; }
+    public string PasswordHash { get; }
     public Player? Player { get; private set; }
 
     private User(Guid id, string name, Email email, string passwordHash)
@@ -27,6 +27,14 @@ public sealed class User
         if (string.IsNullOrWhiteSpace(passwordHash)) throw new InvalidUserException("User password cannot be empty.");
 
         return new User(Guid.NewGuid(), name.Trim(), mail, passwordHash);
+    }
+
+    public static User Restore(Guid id, string name, string email, string passwordHash, Player? player = null)
+    {
+        User user = new User(id, name, Email.Restore(email), passwordHash);
+        user.Player = player;
+
+        return user;
     }
 
     public void LinkPlayer(Player player)

@@ -4,7 +4,7 @@ namespace Cochief.Domain.ValueObjects;
 
 public sealed record Tag
 {
-    private string Value { get; }
+    public string Value { get; }
 
     private Tag(string value)
     {
@@ -20,6 +20,8 @@ public sealed record Tag
 
         return new Tag(normalizedValue);
     }
+
+    public static Tag Restore(string value) => new Tag(value);
 
     public override string ToString() => Value;
 }

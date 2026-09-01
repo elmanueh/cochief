@@ -18,7 +18,7 @@ public partial class Program
             configuration.LicenseKey = builder.Configuration["AutoMapper:LicenseKey"];
         }, typeof(PresentationMappingProfile));
 
-        builder.Services.AddInfrastructure();
+        builder.Services.AddInfrastructure(builder.Configuration);
 
         WebApplication app = builder.Build();
 

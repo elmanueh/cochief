@@ -6,8 +6,8 @@ namespace Cochief.Domain.Model;
 public sealed class Player
 {
     public Guid Id { get; }
+    public Tag Tag { get; }
     public string Name { get; private set; }
-    public Tag Tag { get; private set; }
     public int TownHallLevel { get; private set; }
     public Guid? ClanId { get; private set; }
 
@@ -27,6 +27,11 @@ public sealed class Player
         if (townHallLevel < 1) throw new InvalidPlayerException("Player town hall level must be at least 1.");
 
         return new Player(Guid.NewGuid(), name.Trim(), tagValue, townHallLevel, clanId);
+    }
+
+    public static Player Restore(Guid id, string name, string tag, int townHallLevel, Guid? clanId = null)
+    {
+        return new Player(id, name, Tag.Restore(tag), townHallLevel, clanId);
     }
 
     public void UpdateName(string name)
