@@ -1,6 +1,16 @@
 <Solution>
-  <Project Path="./src/Cochief.Api/Cochief.Api.csproj" Id="7644fece-2f45-4ca4-b40a-fced17682b24" />
-  <Project Path="./src/Cochief.Application/Cochief.Application.csproj" Id="4a1e39c6-a1a8-4091-a0ac-d267eee2368b" />
-  <Project Path="./src/Cochief.Domain/Cochief.Domain.csproj" Id="40f0e9f2-6bbf-4fbb-a672-a14d1ff1e0ab" />
-  <Project Path="./src/Cochief.Infrastructure/Cochief.Infrastructure.csproj" Id="04bf022e-23fd-4a26-8839-2cb163e7d5a8" />
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".env" />
+    <File Path=".env.example" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="docker-compose.yml" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="src/Cochief.Api/Cochief.Api.csproj" Id="7644fece-2f45-4ca4-b40a-fced17682b24" />
+  <Project Path="src/Cochief.Application/Cochief.Application.csproj" Id="4a1e39c6-a1a8-4091-a0ac-d267eee2368b" />
+  <Project Path="src/Cochief.Domain/Cochief.Domain.csproj" Id="40f0e9f2-6bbf-4fbb-a672-a14d1ff1e0ab" />
+  <Project Path="src/Cochief.Infrastructure/Cochief.Infrastructure.csproj" Id="04bf022e-23fd-4a26-8839-2cb163e7d5a8" />
 </Solution>
