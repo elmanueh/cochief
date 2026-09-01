@@ -1,0 +1,36 @@
+{
+  "runtime": "Net100",
+  "defaultVariables": null,
+  "documentGenerator": {
+    "fromDocument": {
+      "url": "clash-of-clans-v1.yaml",
+      "newLineBehavior": "LF"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "className": "ClashOfClansApiClient",
+      "operationGenerationMode": "SingleClientFromOperationId",
+      "generateClientInterfaces": true,
+      "injectHttpClient": true,
+      "disposeHttpClient": false,
+      "useBaseUrl": false,
+      "generateBaseUrlProperty": false,
+      "generateExceptionClasses": true,
+      "exceptionClass": "ClashOfClansApiException",
+      "generateResponseClasses": true,
+      "responseClass": "ClashOfClansApiResponse",
+      "namespace": "Cochief.Infrastructure.ClashOfClans.Generated",
+      "jsonLibrary": "SystemTextJson",
+      "classStyle": "Poco",
+      "generateNullableReferenceTypes": true,
+      "generateOptionalPropertiesAsNullable": true,
+      "generateJsonMethods": false,
+      "generateContractsOutput": true,
+      "contractsNamespace": "Cochief.Infrastructure.ClashOfClans.Generated",
+      "contractsOutputFilePath": "../obj/Generated/ClashOfClans/Contracts/ClashOfClansApiContracts.g.cs",
+      "output": "../obj/Generated/ClashOfClans/Clients/ClashOfClansApiClient.g.cs",
+      "newLineBehavior": "LF"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+<Project>
+
+  <PropertyGroup>
+    <ClashOfClansNswagConfig>$(MSBuildThisFileDirectory)nswag.json</ClashOfClansNswagConfig>
+    <ClashOfClansGeneratedRoot>$(BaseIntermediateOutputPath)Generated/ClashOfClans</ClashOfClansGeneratedRoot>
+    <ClashOfClansGeneratedClient>$(ClashOfClansGeneratedRoot)/Clients/ClashOfClansApiClient.g.cs</ClashOfClansGeneratedClient>
+    <ClashOfClansGeneratedContracts>$(ClashOfClansGeneratedRoot)/Contracts/ClashOfClansApiContracts.g.cs</ClashOfClansGeneratedContracts>
+  </PropertyGroup>
+
+  <Target Name="GenerateClashOfClansApiClient">
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(ClashOfClansGeneratedClient)'))" />
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(ClashOfClansGeneratedContracts)'))" />
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)"
+          Command="$(NSwagExe_Net100) run &quot;$(ClashOfClansNswagConfig)&quot;" />
+  </Target>
+
+  <Target Name="GenerateClashOfClansApiClientDuringBuild"
+          BeforeTargets="IncludeClashOfClansApiClient"
+          Condition="'$(GenerateClashOfClansClient)' == 'true'"
+          DependsOnTargets="GenerateClashOfClansApiClient" />
+
+  <Target Name="IncludeClashOfClansApiClient" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <Compile Include="$(ClashOfClansGeneratedClient)" />
+      <Compile Include="$(ClashOfClansGeneratedContracts)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CleanClashOfClansGeneratedCode" AfterTargets="Clean">
+    <RemoveDir Directories="$(ClashOfClansGeneratedRoot)" />
+  </Target>
+
+</Project>

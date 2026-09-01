@@ -2,6 +2,7 @@ namespace Cochief.Api.Middleware;
 
 using Cochief.Application.Exceptions;
 using Cochief.Domain.Exceptions;
+using Cochief.Infrastructure.ClashOfClans.Exceptions;
 using Cochief.Infrastructure.Persistence.Exceptions;
 
 public sealed class ExceptionHandlerMiddleware(RequestDelegate next)
@@ -44,6 +45,7 @@ public sealed class ExceptionHandlerMiddleware(RequestDelegate next)
             UserNotFoundException => (StatusCodes.Status404NotFound, "Not Found", exception.Message),
             UserAlreadyExistsException => (StatusCodes.Status409Conflict, "Conflict", exception.Message),
             RepositoryException => (StatusCodes.Status500InternalServerError, "Internal Server Error", exception.Message),
+            ClashOfClansException => (StatusCodes.Status502BadGateway, "Bad Gateway", exception.Message),
             AuthException => (StatusCodes.Status401Unauthorized, "Unauthorized", exception.Message),
             ValidationException => (StatusCodes.Status400BadRequest, "Bad Request", exception.Message),
             DomainException => (StatusCodes.Status409Conflict, "Conflict", exception.Message),
