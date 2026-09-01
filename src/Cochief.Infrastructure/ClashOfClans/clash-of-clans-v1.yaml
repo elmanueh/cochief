@@ -73,7 +73,7 @@ definitions:
       id:
         type: integer
   JsonLocalizedName:
-    type: object
+    type: string
   ServiceVersion:
     type: object
     properties:
@@ -358,11 +358,6 @@ definitions:
         type: integer
       type:
         type: string
-        enum:
-          - GROUND
-          - ROOF
-          - FOOT
-          - DECO
   BuilderBaseLeague:
     type: object
     properties:
@@ -418,7 +413,8 @@ definitions:
       maxBattles:
         type: integer
   long:
-    type: object
+    type: integer
+    format: int64
   LeagueSeasonList:
     type: array
     items:
@@ -610,7 +606,8 @@ definitions:
       clanGoldSinkTotal:
         $ref: '#/definitions/Long'
   Long:
-    type: object
+    type: integer
+    format: int64
   ClanDistrictDataList:
     type: array
     items:
@@ -1031,17 +1028,8 @@ definitions:
         $ref: '#/definitions/BuilderBaseLeague'
       role:
         type: string
-        enum:
-          - NOT_MEMBER
-          - MEMBER
-          - LEADER
-          - ADMIN
-          - COLEADER
       warPreference:
         type: string
-        enum:
-          - OUT
-          - IN
       attackWins:
         type: integer
       defenseWins:
@@ -1119,10 +1107,6 @@ definitions:
         $ref: '#/definitions/JsonLocalizedName'
       village:
         type: string
-        enum:
-          - HOME_VILLAGE
-          - BUILDER_BASE
-          - CLAN_CAPITAL
   PlayerItemLevelList:
     type: array
     items:
@@ -1138,10 +1122,6 @@ definitions:
         type: integer
       village:
         type: string
-        enum:
-          - HOME_VILLAGE
-          - BUILDER_BASE
-          - CLAN_CAPITAL
       superTroopIsActive:
         type: boolean
       equipment:
