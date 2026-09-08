@@ -1,18 +1,17 @@
 using Cochief.Domain.Enums;
 using Cochief.Domain.Exceptions;
+using Cochief.Domain.Shared;
 
 namespace Cochief.Domain.Model;
 
-public sealed class Member
+public sealed class Member : Entity
 {
-    public Guid Id { get; }
     public Guid PlayerId { get; }
     public Guid ClanId { get; }
     public MemberRole Role { get; private set; }
 
-    private Member(Guid id, Guid playerId, Guid clanId, MemberRole role)
+    private Member(Guid playerId, Guid clanId, MemberRole role, Guid? id = null) : base(id)
     {
-        Id = id;
         PlayerId = playerId;
         ClanId = clanId;
         Role = role;
@@ -23,7 +22,7 @@ public sealed class Member
         if (playerId == Guid.Empty) throw new InvalidMemberException("Member player cannot be empty.");
         if (clanId == Guid.Empty) throw new InvalidMemberException("Member clan cannot be empty.");
 
-        return new Member(Guid.NewGuid(), playerId, clanId, role);
+        return new Member(playerId, clanId, role);
     }
 
     internal void ChangeRole(MemberRole newRole)

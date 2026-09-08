@@ -1,9 +1,10 @@
 using Cochief.Domain.Exceptions;
+using Cochief.Domain.Shared;
 using System.Net.Mail;
 
 namespace Cochief.Domain.ValueObjects;
 
-public sealed record Email
+public sealed record Email : ValueObject
 {
     public string Value { get; }
 

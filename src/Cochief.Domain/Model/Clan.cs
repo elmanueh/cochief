@@ -1,22 +1,22 @@
 using Cochief.Domain.Enums;
+using Cochief.Domain.Events;
 using Cochief.Domain.Exceptions;
+using Cochief.Domain.Shared;
 using Cochief.Domain.ValueObjects;
 using System.Collections.ObjectModel;
 
 namespace Cochief.Domain.Model;
 
-public sealed class Clan
+public sealed class Clan : AggregateRoot
 {
     private readonly List<Member> _members;
 
-    public Guid Id { get; }
     public string Name { get; }
     public Tag Tag { get; }
     public ReadOnlyCollection<Member> Members { get; }
 
-    private Clan(Guid id, string name, Tag tag)
+    private Clan(string name, Tag tag, Guid? id = null) : base(id)
     {
-        Id = id;
         Name = name;
         Tag = tag;
         _members = [];
@@ -28,12 +28,15 @@ public sealed class Clan
         if (string.IsNullOrWhiteSpace(name)) throw new InvalidClanException("Clan name cannot be empty.");
         Tag tagValue = Tag.Create(tag);
 
-        return new Clan(Guid.NewGuid(), name.Trim(), tagValue);
+        Clan clan = new Clan(name.Trim(), tagValue);
+        clan.AddDomainEvent(new ClanCreatedEvent(clan.Id, clan.Name, clan.Tag.Value));
+
+        return clan;
     }
 
     public static Clan Restore(Guid id, string name, string tag)
     {
-        return new Clan(id, name, Tag.Restore(tag));
+        return new Clan(name, Tag.Restore(tag), id);
     }
 
     public void AddMember(Guid playerId, MemberRole role)
@@ -42,6 +45,7 @@ public sealed class Clan
 
         Member member = Member.Create(playerId, Id, role);
         _members.Add(member);
+        this.AddDomainEvent(new ClanMemberAddedEvent(Id, playerId, role));
     }
 
     public void UpdateMember(Guid playerId, MemberRole role)
@@ -49,7 +53,11 @@ public sealed class Clan
         Member member = _members.FirstOrDefault(member => member.PlayerId == playerId)
             ?? throw new InvalidClanException("Player is not a member of the clan.");
 
+        if (member.Role == role) return;
+
+        MemberRole previousRole = member.Role;
         member.ChangeRole(role);
+        this.AddDomainEvent(new ClanMemberUpdatedEvent(Id, playerId, previousRole, role));
     }
 
     public void DeleteMember(Guid playerId)
@@ -58,5 +66,6 @@ public sealed class Clan
             ?? throw new InvalidClanException("Player is not a member of the clan.");
 
         _members.Remove(member);
+        this.AddDomainEvent(new ClanMemberDeletedEvent(Id, playerId, member.Role));
     }
 }

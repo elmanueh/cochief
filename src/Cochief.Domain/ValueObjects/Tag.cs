@@ -1,8 +1,9 @@
 using Cochief.Domain.Exceptions;
+using Cochief.Domain.Shared;
 
 namespace Cochief.Domain.ValueObjects;
 
-public sealed record Tag
+public sealed record Tag : ValueObject
 {
     public string Value { get; }
 
