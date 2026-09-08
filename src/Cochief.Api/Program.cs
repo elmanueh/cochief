@@ -1,5 +1,6 @@
 using Cochief.Api.Middleware;
 using Cochief.Api.Presentation.Mappers;
+using Cochief.Api.Workers;
 using Cochief.Infrastructure;
 using Cochief.Infrastructure.Persistence;
 using DotNetEnv;
@@ -15,6 +16,7 @@ builder.Services.AddAutoMapper(configuration =>
 }, typeof(PresentationMappingProfile));
 
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddHostedService<ClanSynchronizationWorker>();
 
 WebApplication app = builder.Build();
 

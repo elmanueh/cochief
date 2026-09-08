@@ -31,30 +31,31 @@ public sealed class Clan
         return new Clan(Guid.NewGuid(), name.Trim(), tagValue);
     }
 
-    public static Clan Restore(Guid id, string name, string tag, IEnumerable<Member>? members = null)
+    public static Clan Restore(Guid id, string name, string tag)
     {
-        Clan clan = new Clan(id, name, Tag.Restore(tag));
-
-        if (members is not null) clan._members.AddRange(members);
-
-        return clan;
+        return new Clan(id, name, Tag.Restore(tag));
     }
 
-    public void AddMember(Guid playerId)
+    public void AddMember(Guid playerId, MemberRole role)
     {
-        if (playerId == Guid.Empty) throw new InvalidClanException("Player ID cannot be empty.");
         if (_members.Any(member => member.PlayerId == playerId)) throw new InvalidClanException("Player is already a member of the clan.");
 
-        Member member = Member.Create(playerId, this.Id, MemberRole.Member);
+        Member member = Member.Create(playerId, Id, role);
         _members.Add(member);
     }
 
-    public void RemoveMember(Guid playerId)
+    public void UpdateMember(Guid playerId, MemberRole role)
     {
-        if (playerId == Guid.Empty) throw new InvalidClanException("Player ID cannot be empty.");
+        Member member = _members.FirstOrDefault(member => member.PlayerId == playerId)
+            ?? throw new InvalidClanException("Player is not a member of the clan.");
 
-        Member? member = _members.FirstOrDefault(member => member.PlayerId == playerId);
-        if (member == null) throw new InvalidClanException("Player is not a member of the clan.");
+        member.ChangeRole(role);
+    }
+
+    public void DeleteMember(Guid playerId)
+    {
+        Member member = _members.FirstOrDefault(member => member.PlayerId == playerId)
+            ?? throw new InvalidClanException("Player is not a member of the clan.");
 
         _members.Remove(member);
     }

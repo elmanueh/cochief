@@ -6,18 +6,21 @@ using Cochief.Domain.Ports;
 
 public sealed class AuthService(IUserService userService, IPasswordHasher passwordHasher) : IAuthService
 {
+    private readonly IUserService _userService = userService;
+    private readonly IPasswordHasher _passwordHasher = passwordHasher;
+
     public async Task<User> RegisterAsync(string name, string email, string password, CancellationToken ct)
     {
-        User user = await userService.CreateUserAsync(name, email, password, ct);
+        User user = await _userService.CreateUserAsync(name, email, password, ct);
 
         return user;
     }
 
     public async Task<User> LoginAsync(string email, string password, CancellationToken ct)
     {
-        User? user = await userService.GetUserByEmailAsync(email, ct);
+        User? user = await _userService.GetUserByEmailAsync(email, ct);
 
-        if (user is null || !passwordHasher.Verify(password, user.PasswordHash))
+        if (user is null || !_passwordHasher.Verify(password, user.PasswordHash))
         {
             throw new AuthException("Email or password is incorrect.");
         }

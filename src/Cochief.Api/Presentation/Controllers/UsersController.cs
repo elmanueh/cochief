@@ -10,13 +10,16 @@ namespace Cochief.Api.Presentation.Controllers;
 [Route("api/users")]
 public sealed class UsersController(IUserService userService, IMapper mapper) : ControllerBase
 {
+    private readonly IUserService _userService = userService;
+    private readonly IMapper _mapper = mapper;
+
     [HttpGet("{id}")]
     [ProducesResponseType<UserResponseDto>(StatusCodes.Status200OK)]
     public async Task<ActionResult<UserResponseDto>> GetById(Guid id, CancellationToken cancellationToken)
     {
-        User user = await userService.GetUserAsync(id, cancellationToken);
+        User user = await _userService.GetUserAsync(id, cancellationToken);
 
-        UserResponseDto response = mapper.Map<UserResponseDto>(user);
+        UserResponseDto response = _mapper.Map<UserResponseDto>(user);
 
         return Ok(response);
     }
@@ -25,7 +28,7 @@ public sealed class UsersController(IUserService userService, IMapper mapper) : 
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> LinkPlayer(Guid id, CreateLinkPlayerRequestDto request, CancellationToken cancellationToken)
     {
-        await userService.LinkPlayerAsync(id, request.PlayerTag, request.VerificationToken, cancellationToken);
+        await _userService.LinkPlayerAsync(id, request.PlayerTag, request.VerificationToken, cancellationToken);
 
         return NoContent();
     }
@@ -34,7 +37,7 @@ public sealed class UsersController(IUserService userService, IMapper mapper) : 
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UnlinkPlayer(Guid id, CancellationToken cancellationToken)
     {
-        await userService.UnlinkPlayerAsync(id, cancellationToken);
+        await _userService.UnlinkPlayerAsync(id, cancellationToken);
 
         return NoContent();
     }

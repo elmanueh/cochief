@@ -10,13 +10,16 @@ namespace Cochief.Api.Presentation.Controllers;
 [Route("api/auth")]
 public sealed class AuthController(IAuthService authService, IMapper mapper) : ControllerBase
 {
+    private readonly IAuthService _authService = authService;
+    private readonly IMapper _mapper = mapper;
+
     [HttpPost("register")]
     [ProducesResponseType<UserResponseDto>(StatusCodes.Status201Created)]
     public async Task<ActionResult<UserResponseDto>> Register(CreateUserRequestDto request, CancellationToken cancellationToken)
     {
-        User user = await authService.RegisterAsync(request.Name, request.Email, request.Password, cancellationToken);
+        User user = await _authService.RegisterAsync(request.Name, request.Email, request.Password, cancellationToken);
 
-        UserResponseDto response = mapper.Map<UserResponseDto>(user);
+        UserResponseDto response = _mapper.Map<UserResponseDto>(user);
 
         return CreatedAtAction(nameof(UsersController.GetById), "Users", new { id = response.Id }, response);
     }
@@ -25,9 +28,9 @@ public sealed class AuthController(IAuthService authService, IMapper mapper) : C
     [ProducesResponseType<UserResponseDto>(StatusCodes.Status200OK)]
     public async Task<ActionResult<UserResponseDto>> Login(CreateLoginRequestDto request, CancellationToken cancellationToken)
     {
-        User user = await authService.LoginAsync(request.Email, request.Password, cancellationToken);
+        User user = await _authService.LoginAsync(request.Email, request.Password, cancellationToken);
 
-        UserResponseDto response = mapper.Map<UserResponseDto>(user);
+        UserResponseDto response = _mapper.Map<UserResponseDto>(user);
 
         return Ok(response);
     }

@@ -19,6 +19,7 @@ public static class DependencyInjection
         services.AddSingleton<IPasswordHasher, Argon2idPasswordHasher>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IClanService, ClanService>();
 
         services.AddPersistence(configuration);
         services.AddClashOfClans(configuration);
@@ -60,6 +61,8 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString, npgsql => npgsql.EnableRetryOnFailure()));
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IClanRepository, ClanRepository>();
+        services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

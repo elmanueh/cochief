@@ -8,7 +8,7 @@ public sealed class CochiefDbContext(DbContextOptions<CochiefDbContext> options)
     public DbSet<User> Users => Set<User>();
     public DbSet<Player> Players => Set<Player>();
     public DbSet<Clan> Clans => Set<Clan>();
-    public DbSet<Member> Members => Set<Member>();
+    internal DbSet<Member> Members => Set<Member>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

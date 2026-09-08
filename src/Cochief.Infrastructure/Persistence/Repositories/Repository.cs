@@ -7,8 +7,11 @@ using Microsoft.EntityFrameworkCore;
 public abstract class Repository<TModel>(CochiefDbContext dbContext) : IRepository<TModel>
     where TModel : class
 {
-    protected CochiefDbContext DbContext { get; } = dbContext;
-    protected DbSet<TModel> Entities { get; } = dbContext.Set<TModel>();
+    private readonly CochiefDbContext _dbContext = dbContext;
+    private readonly DbSet<TModel> _entities = dbContext.Set<TModel>();
+
+    protected CochiefDbContext DbContext => _dbContext;
+    protected DbSet<TModel> Entities => _entities;
     protected virtual IQueryable<TModel> Query => Entities;
     protected virtual IQueryable<TModel> TrackedQuery => Entities;
 

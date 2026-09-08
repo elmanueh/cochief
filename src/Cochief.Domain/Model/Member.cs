@@ -18,7 +18,7 @@ public sealed class Member
         Role = role;
     }
 
-    public static Member Create(Guid playerId, Guid clanId, MemberRole role)
+    internal static Member Create(Guid playerId, Guid clanId, MemberRole role)
     {
         if (playerId == Guid.Empty) throw new InvalidMemberException("Member player cannot be empty.");
         if (clanId == Guid.Empty) throw new InvalidMemberException("Member clan cannot be empty.");
@@ -26,12 +26,7 @@ public sealed class Member
         return new Member(Guid.NewGuid(), playerId, clanId, role);
     }
 
-    public static Member Restore(Guid id, Guid playerId, Guid clanId, MemberRole role)
-    {
-        return new Member(id, playerId, clanId, role);
-    }
-
-    public void ChangeRole(MemberRole newRole)
+    internal void ChangeRole(MemberRole newRole)
     {
         Role = newRole;
     }

@@ -7,11 +7,13 @@ using Cochief.Infrastructure.Persistence.Exceptions;
 
 public sealed class ExceptionHandlerMiddleware(RequestDelegate next)
 {
+    private readonly RequestDelegate _next = next;
+
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await next(context);
+            await _next(context);
         }
         catch (Exception exception) when (
             !context.Response.HasStarted &&
