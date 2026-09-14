@@ -10,6 +10,13 @@ internal sealed class ClashOfClansService(IClashOfClansApiClient apiClient) : IC
 {
     private readonly IClashOfClansApiClient _apiClient = apiClient;
 
+    public async Task<Domain.Model.Clan> GetClanAsync(Tag clanTag, CancellationToken ct)
+    {
+        Clan clan = await _apiClient.GetClanAsync(clanTag.Value, ct);
+
+        return Domain.Model.Clan.Create(clan.Name!, clan.Tag!);
+    }
+
     public async Task<IReadOnlyDictionary<Domain.Model.Player, MemberRole>> GetClanMembersAsync(Tag clanTag, CancellationToken ct)
     {
         ICollection<ClanMember> clanMembers = await _apiClient.GetClanMembersAsync(clanTag.Value, 50, null, null, ct);
@@ -36,9 +43,7 @@ internal sealed class ClashOfClansService(IClashOfClansApiClient apiClient) : IC
         string tag = string.IsNullOrWhiteSpace(playerCoc.Tag) ? "" : playerCoc.Tag;
         int townHallLevel = playerCoc.TownHallLevel ?? 0;
 
-        Domain.Model.Player player = Domain.Model.Player.Create(name, tag, townHallLevel);
-
-        return player;
+        return Domain.Model.Player.Create(name, tag, townHallLevel, playerCoc.Clan?.Tag);
     }
 
     public async Task<bool> VerifyPlayerTokenAsync(Tag playerTag, string token, CancellationToken ct)

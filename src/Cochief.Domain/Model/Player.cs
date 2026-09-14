@@ -10,31 +10,34 @@ public sealed class Player : AggregateRoot
     public Tag Tag { get; }
     public string Name { get; private set; }
     public int TownHallLevel { get; private set; }
-    public Guid? ClanId { get; private set; }
+    public Tag? ClanTag { get; private set; }
 
-    private Player(string name, Tag tag, int townHallLevel, Guid? clanId = null, Guid? id = null) : base(id)
+    private Player(string name, Tag tag, int townHallLevel, Tag? clanTag = null, Guid? id = null) : base(id)
     {
         Name = name;
         Tag = tag;
         TownHallLevel = townHallLevel;
-        ClanId = clanId;
+        ClanTag = clanTag;
     }
 
-    public static Player Create(string name, string tag, int townHallLevel, Guid? clanId = null)
+    public static Player Create(string name, string tag, int townHallLevel, string? clanTag = null)
     {
         if (string.IsNullOrWhiteSpace(name)) throw new InvalidPlayerException("Player name cannot be empty.");
-        Tag tagValue = Tag.Create(tag);
         if (townHallLevel < 1) throw new InvalidPlayerException("Player town hall level must be at least 1.");
+        Tag tagValue = Tag.Create(tag);
+        Tag? clanTagValue = clanTag is null ? null : Tag.Create(clanTag);
 
-        Player player = new Player(name.Trim(), tagValue, townHallLevel, clanId);
-        player.AddDomainEvent(new PlayerCreatedEvent(player.Id, player.Name, player.Tag.Value, player.TownHallLevel, player.ClanId));
+        Player player = new Player(name.Trim(), tagValue, townHallLevel, clanTagValue);
+        player.AddDomainEvent(new PlayerCreatedEvent(player.Id, player.Name, player.Tag.Value, player.TownHallLevel, player.ClanTag?.Value));
 
         return player;
     }
 
-    public static Player Restore(Guid id, string name, string tag, int townHallLevel, Guid? clanId = null)
+    public static Player Restore(Guid id, string name, string tag, int townHallLevel, string? clanTag = null)
     {
-        return new Player(name, Tag.Restore(tag), townHallLevel, clanId, id);
+        Tag? clanTagValue = clanTag is null ? null : Tag.Restore(clanTag);
+
+        return new Player(name, Tag.Restore(tag), townHallLevel, clanTagValue, id);
     }
 
     public void UpdateName(string name)
@@ -60,12 +63,13 @@ public sealed class Player : AggregateRoot
         this.AddDomainEvent(new PlayerTownHallLevelUpdatedEvent(Id, previousTownHallLevel, TownHallLevel));
     }
 
-    public void UpdateClanId(Guid? clanId)
+    public void UpdateClanTag(string? clanTag)
     {
-        if (ClanId == clanId) return;
+        Tag? updatedClanTag = clanTag is null ? null : Tag.Create(clanTag);
+        if (ClanTag == updatedClanTag) return;
 
-        Guid? previousClanId = ClanId;
-        ClanId = clanId;
-        this.AddDomainEvent(new PlayerClanUpdatedEvent(Id, previousClanId, ClanId));
+        string? previousClanTag = ClanTag?.Value;
+        ClanTag = updatedClanTag;
+        this.AddDomainEvent(new PlayerClanUpdatedEvent(Id, previousClanTag, ClanTag?.Value));
     }
 }

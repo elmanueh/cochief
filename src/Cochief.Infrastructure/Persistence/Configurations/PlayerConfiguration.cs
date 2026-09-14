@@ -19,12 +19,12 @@ internal sealed class PlayerConfiguration : IEntityTypeConfiguration<Player>
             .HasMaxLength(20)
             .IsRequired();
         builder.Property(player => player.TownHallLevel).IsRequired();
+        builder.Property(player => player.ClanTag)
+            .HasConversion(
+                clanTag => clanTag == null ? null : clanTag.Value,
+                value => value == null ? null : Tag.Restore(value))
+            .HasMaxLength(20);
         builder.HasIndex(player => player.Tag).IsUnique();
-
-        builder
-            .HasOne<Clan>()
-            .WithMany()
-            .HasForeignKey(player => player.ClanId)
-            .OnDelete(DeleteBehavior.SetNull);
+        builder.HasIndex(player => player.ClanTag);
     }
 }

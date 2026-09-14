@@ -22,6 +22,10 @@ public abstract class Repository<TModel>(CochiefDbContext dbContext) : IReposito
 
     public virtual async Task<TModel> GetByIdAsync(Guid id, CancellationToken ct)
     {
+        TModel? trackedModel = Entities.Local.FirstOrDefault(entity => GetId(entity) == id);
+        if (trackedModel is not null)
+            return trackedModel;
+
         TModel model = await Query.FirstOrDefaultAsync(entity => EF.Property<Guid>(entity, "Id") == id, ct)
             ?? throw new EntityNotFoundException($"{typeof(TModel).Name} '{id}' was not found.");
 

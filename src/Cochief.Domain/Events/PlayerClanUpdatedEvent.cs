@@ -5,13 +5,13 @@ using Cochief.Domain.Shared;
 public sealed class PlayerClanUpdatedEvent : DomainEvent
 {
     public Guid PlayerId { get; }
-    public Guid? PreviousClanId { get; }
-    public Guid? ClanId { get; }
+    public string? PreviousClanTag { get; }
+    public string? ClanTag { get; }
 
-    public PlayerClanUpdatedEvent(Guid playerId, Guid? previousClanId, Guid? clanId)
+    public PlayerClanUpdatedEvent(Guid playerId, string? previousClanTag, string? clanTag)
     {
         PlayerId = playerId;
-        PreviousClanId = previousClanId;
-        ClanId = clanId;
+        PreviousClanTag = previousClanTag;
+        ClanTag = clanTag;
     }
 }

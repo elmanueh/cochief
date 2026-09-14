@@ -1,6 +1,8 @@
 namespace Cochief.Domain.Shared;
 
-public interface IDomainEvent
+using MediatR;
+
+public interface IDomainEvent : INotification
 {
     Guid Id { get; }
     DateTimeOffset OccurredOn { get; }

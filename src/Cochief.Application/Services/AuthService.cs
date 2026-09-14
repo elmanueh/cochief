@@ -4,13 +4,14 @@ using Cochief.Application.Exceptions;
 using Cochief.Domain.Model;
 using Cochief.Domain.Ports;
 
-public sealed class AuthService(IUserService userService, IUserSessionRepository userSessionRepository, IPasswordHasher passwordHasher, IAuthTokenProvider authTokenProvider, IUnitOfWork unitOfWork, TimeProvider timeProvider) : IAuthService
+public sealed class AuthService(IUserService userService, IUserSessionRepository userSessionRepository, IPasswordHasher passwordHasher, IAuthTokenProvider authTokenProvider, IUnitOfWork unitOfWork, IDomainEventDispatcher domainEvents, TimeProvider timeProvider) : IAuthService
 {
     private readonly IUserService _userService = userService;
     private readonly IUserSessionRepository _userSessionRepository = userSessionRepository;
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IAuthTokenProvider _authTokenProvider = authTokenProvider;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IDomainEventDispatcher _domainEvents = domainEvents;
     private readonly TimeProvider _timeProvider = timeProvider;
 
     public async Task<User> RegisterAsync(string name, string email, string password, CancellationToken ct)
@@ -55,6 +56,7 @@ public sealed class AuthService(IUserService userService, IUserSessionRepository
 
         await _userSessionRepository.UpdateAsync(session, ct);
         await _unitOfWork.SaveChangesAsync(ct);
+        await _domainEvents.DispatchAsync(session.PullDomainEvents(), ct);
 
         return new UserAuthentication(user, session.Id, tokens);
     }
@@ -71,6 +73,7 @@ public sealed class AuthService(IUserService userService, IUserSessionRepository
         session.Revoke(_timeProvider.GetUtcNow());
         await _userSessionRepository.UpdateAsync(session, ct);
         await _unitOfWork.SaveChangesAsync(ct);
+        await _domainEvents.DispatchAsync(session.PullDomainEvents(), ct);
     }
 
     private async Task<UserAuthentication> CreateSessionAsync(User user, CancellationToken ct)
@@ -81,6 +84,7 @@ public sealed class AuthService(IUserService userService, IUserSessionRepository
 
         await _userSessionRepository.CreateAsync(session, ct);
         await _unitOfWork.SaveChangesAsync(ct);
+        await _domainEvents.DispatchAsync(session.PullDomainEvents(), ct);
 
         return new UserAuthentication(user, session.Id, tokens);
     }

@@ -1,5 +1,6 @@
 namespace Cochief.Infrastructure;
 
+using Cochief.Application.Events;
 using Cochief.Application.Services;
 using Cochief.Domain.Ports;
 using Cochief.Infrastructure.ClashOfClans.Configuration;
@@ -11,6 +12,7 @@ using Cochief.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MediatR;
 using System.Text;
 
 public static class DependencyInjection
@@ -23,6 +25,17 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IClanService, ClanService>();
+
+        services.AddMediatR(options =>
+        {
+            options.RegisterServicesFromAssemblyContaining<CreateClanOnUserPlayerLinkedHandler>();
+
+            string? licenseKey = configuration["MediatR:LicenseKey"];
+            if (!string.IsNullOrWhiteSpace(licenseKey))
+            {
+                options.LicenseKey = licenseKey;
+            }
+        });
 
         services.AddPersistence(configuration);
         services.AddAuthenticationSecurity(configuration);
@@ -84,6 +97,7 @@ public static class DependencyInjection
         services.AddScoped<IClanRepository, ClanRepository>();
         services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
         return services;
     }

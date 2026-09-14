@@ -8,14 +8,14 @@ public sealed class PlayerCreatedEvent : DomainEvent
     public string Name { get; }
     public string Tag { get; }
     public int TownHallLevel { get; }
-    public Guid? ClanId { get; }
+    public string? ClanTag { get; }
 
-    public PlayerCreatedEvent(Guid playerId, string name, string tag, int townHallLevel, Guid? clanId)
+    public PlayerCreatedEvent(Guid playerId, string name, string tag, int townHallLevel, string? clanTag)
     {
         PlayerId = playerId;
         Name = name;
         Tag = tag;
         TownHallLevel = townHallLevel;
-        ClanId = clanId;
+        ClanTag = clanTag;
     }
 }

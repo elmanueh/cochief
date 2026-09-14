@@ -6,6 +6,7 @@ using Cochief.Domain.ValueObjects;
 
 public interface IClashOfClansService
 {
+    Task<Clan> GetClanAsync(Tag clanTag, CancellationToken ct);
     Task<IReadOnlyDictionary<Player, MemberRole>> GetClanMembersAsync(Tag clanTag, CancellationToken ct);
     Task<Player> GetPlayerAsync(Tag playerTag, CancellationToken ct);
     Task<bool> VerifyPlayerTokenAsync(Tag playerTag, string token, CancellationToken ct);

@@ -46,7 +46,7 @@ public sealed class User : AggregateRoot
         if (Player is not null) throw new InvalidUserException("User already has a linked player.");
 
         Player = player;
-        this.AddDomainEvent(new UserPlayerLinkedEvent(Id, player.Id));
+        this.AddDomainEvent(new UserPlayerLinkedEvent(Id, player.Id, player.ClanTag?.Value));
     }
 
     public void UnlinkPlayer()
