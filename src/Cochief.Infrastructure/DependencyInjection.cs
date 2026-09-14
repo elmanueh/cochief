@@ -2,7 +2,7 @@ namespace Cochief.Infrastructure;
 
 using Cochief.Application.Services;
 using Cochief.Domain.Ports;
-using Cochief.Infrastructure.ClashOfClans;
+using Cochief.Infrastructure.ClashOfClans.Configuration;
 using Cochief.Infrastructure.ClashOfClans.Generated;
 using Cochief.Infrastructure.ClashOfClans.Services;
 using Cochief.Infrastructure.Persistence;
@@ -11,18 +11,37 @@ using Cochief.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text;
 
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton(TimeProvider.System);
         services.AddSingleton<IPasswordHasher, Argon2idPasswordHasher>();
+        services.AddSingleton<IAuthTokenProvider, JwtTokenProvider>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IClanService, ClanService>();
 
         services.AddPersistence(configuration);
+        services.AddAuthenticationSecurity(configuration);
         services.AddClashOfClans(configuration);
+
+        return services;
+    }
+
+    public static IServiceCollection AddAuthenticationSecurity(this IServiceCollection services, IConfiguration configuration)
+    {
+        services
+            .AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .Validate(options => !string.IsNullOrWhiteSpace(options.Issuer), "JWT issuer is required.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.Audience), "JWT audience is required.")
+            .Validate(options => Encoding.UTF8.GetByteCount(options.SigningKey) >= 32, "JWT signing key must contain at least 32 bytes.")
+            .Validate(options => options.AccessTokenMinutes > 0, "JWT access token lifetime must be greater than zero.")
+            .Validate(options => options.RefreshTokenDays > 0, "Refresh token lifetime must be greater than zero.")
+            .ValidateOnStart();
 
         return services;
     }
@@ -61,6 +80,7 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString, npgsql => npgsql.EnableRetryOnFailure()));
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserSessionRepository, UserSessionRepository>();
         services.AddScoped<IClanRepository, ClanRepository>();
         services.AddScoped<IPlayerRepository, PlayerRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();

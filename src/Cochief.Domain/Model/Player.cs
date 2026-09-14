@@ -1,5 +1,5 @@
-using Cochief.Domain.Exceptions;
 using Cochief.Domain.Events;
+using Cochief.Domain.Exceptions;
 using Cochief.Domain.Shared;
 using Cochief.Domain.ValueObjects;
 

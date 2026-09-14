@@ -1,3 +1,4 @@
+using Cochief.Api.Authentication;
 using Cochief.Api.Middleware;
 using Cochief.Api.Presentation.Mappers;
 using Cochief.Api.Workers;
@@ -10,6 +11,7 @@ Env.NoClobber().TraversePath().Load();
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddCochiefAuthentication(builder.Configuration);
 builder.Services.AddAutoMapper(configuration =>
 {
     configuration.LicenseKey = builder.Configuration["AutoMapper:LicenseKey"];
@@ -27,6 +29,7 @@ await using (AsyncServiceScope scope = app.Services.CreateAsyncScope())
 }
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

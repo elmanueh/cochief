@@ -1,4 +1,4 @@
-namespace Cochief.Infrastructure.ClashOfClans;
+namespace Cochief.Infrastructure.ClashOfClans.Configuration;
 
 internal sealed class ClashOfClansOptions
 {

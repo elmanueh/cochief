@@ -1,4 +1,4 @@
-namespace Cochief.Infrastructure.ClashOfClans;
+namespace Cochief.Infrastructure.ClashOfClans.Configuration;
 
 using System.Net.Http.Headers;
 
