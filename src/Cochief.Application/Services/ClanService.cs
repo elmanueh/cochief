@@ -1,18 +1,46 @@
 namespace Cochief.Application.Services;
 
+using Cochief.Application.Exceptions;
 using Cochief.Domain.Enums;
 using Cochief.Domain.Model;
 using Cochief.Domain.Ports;
 using Cochief.Domain.Shared;
 using Cochief.Domain.ValueObjects;
 
-public sealed class ClanService(IClanRepository clanRepository, IPlayerRepository playerRepository, IClashOfClansService clashOfClansService, IUnitOfWork unitOfWork, IDomainEventDispatcher domainEvents) : IClanService
+public sealed class ClanService(IClanRepository clanRepository, IPlayerRepository playerRepository, IUserRepository userRepository, IClashOfClansService clashOfClansService, IUnitOfWork unitOfWork, IDomainEventDispatcher domainEvents) : IClanService
 {
     private readonly IClanRepository _clanRepository = clanRepository;
     private readonly IPlayerRepository _playerRepository = playerRepository;
+    private readonly IUserRepository _userRepository = userRepository;
     private readonly IClashOfClansService _clashOfClansService = clashOfClansService;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IDomainEventDispatcher _domainEvents = domainEvents;
+
+    public async Task<IReadOnlyList<Clan>> GetByUserIdAsync(Guid userId, CancellationToken ct)
+    {
+        User user = await _userRepository.GetByIdAsync(userId, ct);
+        Tag? clanTag = user.Player?.ClanTag;
+
+        if (clanTag is null) return [];
+
+        Clan? clan = await _clanRepository.FindByTagAsync(clanTag, ct);
+
+        return clan is null ? [] : [clan];
+    }
+
+    public async Task<Clan> GetByTagAsync(Guid userId, string clanTag, CancellationToken ct)
+    {
+        Tag tag = Tag.Create(clanTag);
+        User user = await _userRepository.GetByIdAsync(userId, ct);
+
+        if (user.Player?.ClanTag != tag)
+        {
+            throw new ClanAccessDeniedException("The user's player does not belong to the requested clan.");
+        }
+
+        return await _clanRepository.FindByTagAsync(tag, ct)
+            ?? throw new ClanNotFoundException($"Clan with tag '{tag.Value}' was not found.");
+    }
 
     public async Task CreateAsync(string clanTag, CancellationToken ct)
     {

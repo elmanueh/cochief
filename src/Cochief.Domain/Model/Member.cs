@@ -9,6 +9,7 @@ public sealed class Member : Entity
     public Guid PlayerId { get; }
     public Guid ClanId { get; }
     public MemberRole Role { get; private set; }
+    public Player Player { get; private set; } = null!;
 
     private Member(Guid playerId, Guid clanId, MemberRole role, Guid? id = null) : base(id)
     {

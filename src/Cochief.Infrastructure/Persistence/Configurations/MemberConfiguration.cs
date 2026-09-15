@@ -19,7 +19,7 @@ internal sealed class MemberConfiguration : IEntityTypeConfiguration<Member>
         builder.HasIndex(member => member.PlayerId).IsUnique();
 
         builder
-            .HasOne<Player>()
+            .HasOne(member => member.Player)
             .WithOne()
             .HasForeignKey<Member>(member => member.PlayerId)
             .OnDelete(DeleteBehavior.Cascade);
