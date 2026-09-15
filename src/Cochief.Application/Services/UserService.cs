@@ -6,10 +6,11 @@ using Cochief.Domain.Model;
 using Cochief.Domain.Ports;
 using Cochief.Domain.ValueObjects;
 
-public sealed class UserService(IPasswordHasher passwordHasher, IUserRepository userRepository, IUnitOfWork unitOfWork, IDomainEventDispatcher domainEvents, IClashOfClansService clashOfClansService) : IUserService
+public sealed class UserService(IPasswordHasher passwordHasher, IUserRepository userRepository, IPlayerRepository playerRepository, IUnitOfWork unitOfWork, IDomainEventDispatcher domainEvents, IClashOfClansService clashOfClansService) : IUserService
 {
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IUserRepository _userRepository = userRepository;
+    private readonly IPlayerRepository _playerRepository = playerRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IDomainEventDispatcher _domainEvents = domainEvents;
     private readonly IClashOfClansService _clashOfClansService = clashOfClansService;
@@ -54,7 +55,9 @@ public sealed class UserService(IPasswordHasher passwordHasher, IUserRepository 
         bool isValidToken = await _clashOfClansService.VerifyPlayerTokenAsync(tag, token, ct);
         if (!isValidToken) throw new InvalidPlayerException("Player tag or verification token is invalid.");
 
-        Player player = await _clashOfClansService.GetPlayerAsync(tag, ct);
+        Player? player = await _playerRepository.FindByTagAsync(tag, ct);
+        player ??= await _clashOfClansService.GetPlayerAsync(tag, ct);
+
         user.LinkPlayer(player);
 
         await _userRepository.UpdateAsync(user, ct);
