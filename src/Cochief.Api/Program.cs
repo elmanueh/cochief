@@ -1,10 +1,17 @@
 using Cochief.Api.Authentication;
 using Cochief.Api.Middleware;
+using Cochief.Api.OpenApi;
 using Cochief.Api.Presentation.Mappers;
 using Cochief.Api.Workers;
 using Cochief.Infrastructure;
 using Cochief.Infrastructure.Persistence;
 using DotNetEnv;
+
+if (args is ["openapi"])
+{
+    await OpenApiExporter.ExportAsync();
+    return;
+}
 
 Env.NoClobber().TraversePath().Load();
 
