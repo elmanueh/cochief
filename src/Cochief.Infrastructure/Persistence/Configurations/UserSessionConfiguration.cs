@@ -1,12 +1,12 @@
 namespace Cochief.Infrastructure.Persistence.Configurations;
 
-using Cochief.Domain.Model;
+using Cochief.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-internal sealed class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
+internal sealed class UserSessionConfiguration : IEntityTypeConfiguration<UserSessionEntity>
 {
-    public void Configure(EntityTypeBuilder<UserSession> builder)
+    public void Configure(EntityTypeBuilder<UserSessionEntity> builder)
     {
         builder.ToTable("user_sessions");
 
@@ -22,7 +22,7 @@ internal sealed class UserSessionConfiguration : IEntityTypeConfiguration<UserSe
         builder.HasIndex(session => session.UserId);
 
         builder
-            .HasOne<User>()
+            .HasOne<UserEntity>()
             .WithMany()
             .HasForeignKey(session => session.UserId)
             .OnDelete(DeleteBehavior.Cascade);

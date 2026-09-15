@@ -3,42 +3,39 @@ namespace Cochief.Infrastructure.Persistence.Repositories;
 using Cochief.Domain.Model;
 using Cochief.Domain.Ports;
 using Cochief.Domain.ValueObjects;
+using Cochief.Infrastructure.Persistence.Entities;
+using Cochief.Infrastructure.Persistence.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-public sealed class UserRepository(CochiefDbContext dbContext) : Repository<User>(dbContext), IUserRepository
+internal sealed class UserRepository(CochiefDbContext dbContext, UserMapper mapper) : Repository<User, UserEntity>(dbContext, mapper), IUserRepository
 {
-    protected override IQueryable<User> Query => base.Query.Include(user => user.Player);
-
-    protected override IQueryable<User> TrackedQuery => base.TrackedQuery.Include(user => user.Player);
+    protected override IQueryable<UserEntity> Query => base.Query.Include(user => user.Player);
 
     public async Task<User?> FindByEmailAsync(Email email, CancellationToken ct)
     {
-        return await Query.FirstOrDefaultAsync(user => user.Email == email, ct);
+        UserEntity? entity = await Query.FirstOrDefaultAsync(user => user.Email == email.Value, ct);
+
+        return entity is null ? null : Mapper.ToDomain(entity);
     }
 
-    protected override Guid GetId(User model) => model.Id;
-
-    protected override void Apply(User source, User target)
+    protected override void Apply(User model, UserEntity entity)
     {
-        base.Apply(source, target);
+        entity.Name = model.Name;
+        entity.Email = model.Email.Value;
+        entity.PasswordHash = model.PasswordHash;
 
-        if (ReferenceEquals(source, target))
+        if (model.Player is null)
         {
+            entity.Player = null;
+            entity.PlayerId = null;
             return;
         }
 
-        if (source.Player is null)
+        entity.PlayerId = model.Player.Id;
+        PlayerEntity? trackedPlayer = DbContext.Players.Local.FirstOrDefault(player => player.Id == model.Player.Id);
+        if (trackedPlayer is not null)
         {
-            DbContext.Entry(target).Reference(user => user.Player).CurrentValue = null;
-            return;
+            entity.Player = trackedPlayer;
         }
-
-        if (target.Player?.Id == source.Player.Id)
-        {
-            DbContext.Entry(target.Player).CurrentValues.SetValues(source.Player);
-            return;
-        }
-
-        DbContext.Entry(target).Reference(user => user.Player).CurrentValue = source.Player;
     }
 }

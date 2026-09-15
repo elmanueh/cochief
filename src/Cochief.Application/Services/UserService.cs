@@ -56,7 +56,11 @@ public sealed class UserService(IPasswordHasher passwordHasher, IUserRepository 
         if (!isValidToken) throw new InvalidPlayerException("Player tag or verification token is invalid.");
 
         Player? player = await _playerRepository.FindByTagAsync(tag, ct);
-        player ??= await _clashOfClansService.GetPlayerAsync(tag, ct);
+        if (player is null)
+        {
+            player = await _clashOfClansService.GetPlayerAsync(tag, ct);
+            await _playerRepository.CreateAsync(player, ct);
+        }
 
         user.LinkPlayer(player);
 

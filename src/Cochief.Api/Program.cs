@@ -4,7 +4,6 @@ using Cochief.Api.OpenApi;
 using Cochief.Api.Presentation.Mappers;
 using Cochief.Api.Workers;
 using Cochief.Infrastructure;
-using Cochief.Infrastructure.Persistence;
 using DotNetEnv;
 
 if (args is ["openapi"])
@@ -28,12 +27,6 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHostedService<ClanSynchronizationWorker>();
 
 WebApplication app = builder.Build();
-
-await using (AsyncServiceScope scope = app.Services.CreateAsyncScope())
-{
-    CochiefDbContext dbContext = scope.ServiceProvider.GetRequiredService<CochiefDbContext>();
-    await dbContext.Database.EnsureCreatedAsync();
-}
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.UseAuthentication();

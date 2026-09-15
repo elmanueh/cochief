@@ -9,7 +9,6 @@ public sealed class Member : Entity
     public Guid PlayerId { get; }
     public Guid ClanId { get; }
     public MemberRole Role { get; private set; }
-    public Player Player { get; private set; } = null!;
 
     private Member(Guid playerId, Guid clanId, MemberRole role, Guid? id = null) : base(id)
     {
@@ -24,6 +23,11 @@ public sealed class Member : Entity
         if (clanId == Guid.Empty) throw new InvalidMemberException("Member clan cannot be empty.");
 
         return new Member(playerId, clanId, role);
+    }
+
+    public static Member Restore(Guid id, Guid playerId, Guid clanId, MemberRole role)
+    {
+        return new Member(playerId, clanId, role, id);
     }
 
     internal void ChangeRole(MemberRole newRole)

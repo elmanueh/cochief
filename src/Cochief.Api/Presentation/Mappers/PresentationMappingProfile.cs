@@ -12,9 +12,6 @@ public sealed class PresentationMappingProfile : Profile
         CreateMap<Clan, ClanResponseDto>()
             .ForMember(destination => destination.Tag, options => options.MapFrom(source => source.Tag.Value));
         CreateMap<Member, ClanResponseDto.ClanMemberResponseDto>()
-            .ForMember(destination => destination.Name, options => options.MapFrom(source => source.Player.Name))
-            .ForMember(destination => destination.Tag, options => options.MapFrom(source => source.Player.Tag.Value))
-            .ForMember(destination => destination.TownHallLevel, options => options.MapFrom(source => source.Player.TownHallLevel))
             .ForMember(destination => destination.Role, options => options.MapFrom(source => source.Role.ToString()));
         CreateMap<Player, UserResponseDto.PlayerResponseDto>()
             .ForMember(destination => destination.Tag, options => options.MapFrom(source => source.Tag.Value))

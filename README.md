@@ -10,3 +10,28 @@ dotnet run --project src/Cochief.Api -- openapi
 ```
 
 The command writes `openapi/cochief-api.json` without starting the API or exposing a documentation endpoint.
+
+## Database migrations
+
+Restore the repository-local EF Core tool and create a migration after changing the persistence model:
+
+```powershell
+dotnet tool restore
+dotnet ef migrations add MigrationName --project src/Cochief.Infrastructure --startup-project src/Cochief.Api --context CochiefDbContext --output-dir Persistence/Migrations
+```
+
+Apply pending migrations to a local database:
+
+```powershell
+dotnet ef database update --project src/Cochief.Infrastructure --startup-project src/Cochief.Api --context CochiefDbContext --connection "<connection-string>"
+```
+
+Generate a reviewable, idempotent SQL script for a production deployment:
+
+```powershell
+dotnet ef migrations script --idempotent --project src/Cochief.Infrastructure --startup-project src/Cochief.Api --context CochiefDbContext --output artifacts/database-migrations.sql
+```
+
+Apply that script as a separate deployment step before starting the API. The API process does not create or migrate the database schema at startup.
+
+Databases previously created with `EnsureCreated` have no migration history. Recreate disposable development databases before applying `InitialCreate`; databases containing data require a reviewed baseline procedure instead.

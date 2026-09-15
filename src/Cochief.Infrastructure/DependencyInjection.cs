@@ -7,12 +7,12 @@ using Cochief.Infrastructure.ClashOfClans.Configuration;
 using Cochief.Infrastructure.ClashOfClans.Generated;
 using Cochief.Infrastructure.ClashOfClans.Services;
 using Cochief.Infrastructure.Persistence;
+using Cochief.Infrastructure.Persistence.Mappers;
 using Cochief.Infrastructure.Persistence.Repositories;
 using Cochief.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MediatR;
 using System.Text;
 
 public static class DependencyInjection
@@ -92,6 +92,11 @@ public static class DependencyInjection
         services.AddDbContext<CochiefDbContext>(options =>
             options.UseNpgsql(connectionString, npgsql => npgsql.EnableRetryOnFailure()));
 
+        services.AddSingleton<PlayerMapper>();
+        services.AddSingleton<MemberMapper>();
+        services.AddSingleton<ClanMapper>();
+        services.AddSingleton<UserMapper>();
+        services.AddSingleton<UserSessionMapper>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserSessionRepository, UserSessionRepository>();
         services.AddScoped<IClanRepository, ClanRepository>();

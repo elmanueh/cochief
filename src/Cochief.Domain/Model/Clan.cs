@@ -34,9 +34,12 @@ public sealed class Clan : AggregateRoot
         return clan;
     }
 
-    public static Clan Restore(Guid id, string name, string tag)
+    public static Clan Restore(Guid id, string name, string tag, IEnumerable<Member>? members = null)
     {
-        return new Clan(name, Tag.Restore(tag), id);
+        Clan clan = new Clan(name, Tag.Restore(tag), id);
+        if (members is not null) clan._members.AddRange(members);
+
+        return clan;
     }
 
     public void AddMember(Guid playerId, MemberRole role)

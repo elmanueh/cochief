@@ -943,33 +943,13 @@
             "type": "string",
             "format": "uuid"
           },
-          "name": {
-            "type": "string"
-          },
-          "tag": {
-            "type": "string",
-            "description": "Player tag including the leading hash character.",
-            "example": "#2ABC123"
-          },
-          "townHallLevel": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "format": "int32"
-          },
           "role": {
             "type": "string",
             "description": "Player role within the clan.",
             "example": "Leader"
           }
         },
-        "description": "A player and their membership within the clan."
+        "description": "A player's membership within the clan."
       },
       "ClanResponseDto": {
         "type": "object",

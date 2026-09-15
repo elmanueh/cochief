@@ -1,6 +1,6 @@
 namespace Cochief.Domain.Shared;
 
-public abstract class Entity
+public abstract class Entity : IIdentifiable
 {
     public Guid Id { get; }
 

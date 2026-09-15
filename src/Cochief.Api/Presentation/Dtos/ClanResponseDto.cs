@@ -11,16 +11,10 @@ public sealed class ClanResponseDto
     public string Tag { get; set; } = string.Empty;
     public IReadOnlyList<ClanMemberResponseDto> Members { get; set; } = [];
 
-    /// <summary>A player and their membership within the clan.</summary>
+    /// <summary>A player's membership within the clan.</summary>
     public sealed class ClanMemberResponseDto
     {
         public Guid PlayerId { get; set; }
-        public string Name { get; set; } = string.Empty;
-
-        /// <summary>Player tag including the leading hash character.</summary>
-        /// <example>#2ABC123</example>
-        public string Tag { get; set; } = string.Empty;
-        public int TownHallLevel { get; set; }
 
         /// <summary>Player role within the clan.</summary>
         /// <example>Leader</example>

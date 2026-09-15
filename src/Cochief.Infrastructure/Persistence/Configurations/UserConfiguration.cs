@@ -1,13 +1,12 @@
 namespace Cochief.Infrastructure.Persistence.Configurations;
 
-using Cochief.Domain.Model;
-using Cochief.Domain.ValueObjects;
+using Cochief.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
+internal sealed class UserConfiguration : IEntityTypeConfiguration<UserEntity>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    public void Configure(EntityTypeBuilder<UserEntity> builder)
     {
         builder.ToTable("users");
 
@@ -15,7 +14,6 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(user => user.Id).ValueGeneratedNever();
         builder.Property(user => user.Name).HasMaxLength(100).IsRequired();
         builder.Property(user => user.Email)
-            .HasConversion(email => email.Value, value => Email.Restore(value))
             .HasMaxLength(320)
             .IsRequired();
         builder.Property(user => user.PasswordHash).HasMaxLength(512).IsRequired();
@@ -24,7 +22,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder
             .HasOne(user => user.Player)
             .WithOne()
-            .HasForeignKey<User>("PlayerId")
+            .HasForeignKey<UserEntity>(user => user.PlayerId)
             .OnDelete(DeleteBehavior.SetNull);
     }
 }

@@ -1,15 +1,15 @@
 namespace Cochief.Infrastructure.Persistence;
 
-using Cochief.Domain.Model;
+using Cochief.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 
 public sealed class CochiefDbContext(DbContextOptions<CochiefDbContext> options) : DbContext(options)
 {
-    public DbSet<User> Users => Set<User>();
-    public DbSet<UserSession> UserSessions => Set<UserSession>();
-    public DbSet<Player> Players => Set<Player>();
-    public DbSet<Clan> Clans => Set<Clan>();
-    internal DbSet<Member> Members => Set<Member>();
+    internal DbSet<UserEntity> Users => Set<UserEntity>();
+    internal DbSet<UserSessionEntity> UserSessions => Set<UserSessionEntity>();
+    internal DbSet<PlayerEntity> Players => Set<PlayerEntity>();
+    internal DbSet<ClanEntity> Clans => Set<ClanEntity>();
+    internal DbSet<MemberEntity> Members => Set<MemberEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

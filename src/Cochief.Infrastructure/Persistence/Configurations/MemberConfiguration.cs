@@ -1,12 +1,12 @@
 namespace Cochief.Infrastructure.Persistence.Configurations;
 
-using Cochief.Domain.Model;
+using Cochief.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-internal sealed class MemberConfiguration : IEntityTypeConfiguration<Member>
+internal sealed class MemberConfiguration : IEntityTypeConfiguration<MemberEntity>
 {
-    public void Configure(EntityTypeBuilder<Member> builder)
+    public void Configure(EntityTypeBuilder<MemberEntity> builder)
     {
         builder.ToTable("members");
 
@@ -19,13 +19,13 @@ internal sealed class MemberConfiguration : IEntityTypeConfiguration<Member>
         builder.HasIndex(member => member.PlayerId).IsUnique();
 
         builder
-            .HasOne(member => member.Player)
+            .HasOne<PlayerEntity>()
             .WithOne()
-            .HasForeignKey<Member>(member => member.PlayerId)
+            .HasForeignKey<MemberEntity>(member => member.PlayerId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder
-            .HasOne<Clan>()
+            .HasOne<ClanEntity>()
             .WithMany(clan => clan.Members)
             .HasForeignKey(member => member.ClanId)
             .OnDelete(DeleteBehavior.Cascade);
