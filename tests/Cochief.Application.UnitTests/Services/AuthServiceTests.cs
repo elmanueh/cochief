@@ -1,8 +1,8 @@
-namespace Cochief.Application.Tests.Services;
+namespace Cochief.Application.UnitTests.Services;
 
 using Cochief.Application.Exceptions;
 using Cochief.Application.Services;
-using Cochief.Application.Tests.Fixtures;
+using Cochief.Application.UnitTests.Fixtures;
 using Cochief.Domain.Model;
 using Cochief.Domain.Ports;
 using Cochief.Domain.Shared;

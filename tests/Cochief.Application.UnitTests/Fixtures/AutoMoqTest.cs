@@ -1,4 +1,4 @@
-namespace Cochief.Application.Tests.Fixtures;
+namespace Cochief.Application.UnitTests.Fixtures;
 
 using AutoFixture;
 using AutoFixture.AutoMoq;

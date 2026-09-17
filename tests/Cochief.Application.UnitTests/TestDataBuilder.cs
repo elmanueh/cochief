@@ -1,4 +1,4 @@
-namespace Cochief.Application.Tests;
+namespace Cochief.Application.UnitTests;
 
 using Cochief.Domain.Model;
 using Cochief.Domain.Ports;
