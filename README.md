@@ -21,6 +21,14 @@ dotnet test cochief.slnx
 
 The application service tests use AutoFixture with AutoMoq to create and inject mocks for persistence, external APIs and token generation, plus a controlled clock, so they do not require PostgreSQL or Clash of Clans credentials.
 
+Run the application integration tests with Docker available:
+
+```powershell
+dotnet test tests/Cochief.Application.IntegrationTests/Cochief.Application.IntegrationTests.csproj
+```
+
+The integration suite starts an isolated PostgreSQL 17 container, recreates and seeds its database before every test, and exercises every API controller endpoint through the real HTTP, persistence, authentication and security pipeline.
+
 ## Database migrations
 
 Restore the repository-local EF Core tool and create a migration after changing the persistence model:

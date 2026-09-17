@@ -17,7 +17,7 @@ Env.NoClobber().TraversePath().Load();
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddCochiefAuthentication(builder.Configuration);
+builder.Services.AddCochiefAuthentication();
 builder.Services.AddAutoMapper(configuration =>
 {
     configuration.LicenseKey = builder.Configuration["AutoMapper:LicenseKey"];

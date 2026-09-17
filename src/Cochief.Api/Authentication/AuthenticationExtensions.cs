@@ -3,6 +3,7 @@ namespace Cochief.Api.Authentication;
 using Cochief.Application.Exceptions;
 using Cochief.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
@@ -11,14 +12,17 @@ using System.Text;
 
 public static class AuthenticationExtensions
 {
-    public static IServiceCollection AddCochiefAuthentication(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddCochiefAuthentication(this IServiceCollection services)
     {
-        JwtOptions jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
-
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+            .AddJwtBearer();
+
+        services
+            .AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+            .Configure<IOptions<JwtOptions>>((options, configuredJwtOptions) =>
             {
+                JwtOptions jwtOptions = configuredJwtOptions.Value;
                 options.MapInboundClaims = false;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {

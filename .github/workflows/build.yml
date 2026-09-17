@@ -26,3 +26,6 @@ jobs:
 
       - name: Test application
         run: dotnet test tests/Cochief.Application.Tests/Cochief.Application.Tests.csproj --configuration Release --no-build
+
+      - name: Test application integration
+        run: dotnet test tests/Cochief.Application.IntegrationTests/Cochief.Application.IntegrationTests.csproj --configuration Release --no-build
