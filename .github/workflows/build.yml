@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   build:
-    name: Build application
+    name: Build and test application
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,10 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.0.x
+          global-json-file: global.json
 
       - name: Build
         run: dotnet build --configuration Release -p:GenerateClashOfClansClient=true
+
+      - name: Test application
+        run: dotnet test tests/Cochief.Application.Tests/Cochief.Application.Tests.csproj --configuration Release --no-build
