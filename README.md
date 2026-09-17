@@ -11,6 +11,16 @@ dotnet run --project src/Cochief.Api -- openapi
 
 The command writes `openapi/cochief-api.json` without starting the API or exposing a documentation endpoint.
 
+## Unit tests
+
+Run the xUnit test suite from the repository root:
+
+```powershell
+dotnet test cochief.slnx
+```
+
+The application service tests use AutoFixture with AutoMoq to create and inject mocks for persistence, external APIs and token generation, plus a controlled clock, so they do not require PostgreSQL or Clash of Clans credentials.
+
 ## Database migrations
 
 Restore the repository-local EF Core tool and create a migration after changing the persistence model:
